@@ -1,65 +1,69 @@
-import Image from "next/image";
+import Link from "next/link";
+import { User, ShieldAlert, Star } from "lucide-react";
 
-export default function Home() {
+export default function LandingPage() {
   return (
-    <div className="flex flex-col flex-1 items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex flex-1 w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the page.tsx file.
-          </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
-          </p>
-        </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
+    <div className="flex flex-col md:flex-row min-h-screen">
+      {/* Left Panel */}
+      <div className="md:w-1/2 bg-background flex flex-col justify-center items-center p-8 relative overflow-hidden border-b md:border-b-0 md:border-r border-slate-200 dark:border-slate-800">
+        <div className="absolute animate-pulse-ring rounded-full w-96 h-96 bg-primary/10 -z-10"></div>
+        <h1 className="text-5xl md:text-7xl font-bold text-primary mb-4 tracking-tight">
+          CrisisLink
+        </h1>
+        <p className="text-xl md:text-2xl text-slate-600 dark:text-slate-400 text-center max-w-md">
+          Instant crisis coordination for hospitality venues
+        </p>
+      </div>
+
+      {/* Right Panel */}
+      <div className="md:w-1/2 bg-slate-50 dark:bg-slate-900 flex flex-col justify-center p-8 md:p-16">
+        <div className="max-w-md w-full mx-auto space-y-6">
+          <h2 className="text-2xl font-semibold mb-8 text-center text-foreground">Select your role to continue</h2>
+
+          <Link
+            href="/guest"
+            className="flex items-center p-6 bg-primary text-white rounded-xl shadow-lg hover:bg-primary-hover hover:scale-[0.98] transition-all duration-200 group"
           >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={16}
-            />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
+            <div className="bg-white/20 p-4 rounded-full mr-6 group-hover:bg-white/30 transition-colors">
+              <User size={32} />
+            </div>
+            <div>
+              <h3 className="text-2xl font-bold">I'm a Guest</h3>
+              <p className="text-primary-50 opacity-90">Report an emergency</p>
+            </div>
+          </Link>
+
+          <Link
+            href="/staff/login"
+            className="flex items-center p-6 bg-warning text-white rounded-xl shadow-lg hover:bg-warning/90 hover:scale-[0.98] transition-all duration-200 group"
           >
-            Documentation
-          </a>
+            <div className="bg-white/20 p-4 rounded-full mr-6 group-hover:bg-white/30 transition-colors">
+              <ShieldAlert size={32} />
+            </div>
+            <div>
+              <h3 className="text-2xl font-bold">I'm Hotel Staff</h3>
+              <p className="text-white/90">Respond to incidents</p>
+            </div>
+          </Link>
+
+          <Link
+            href="/commander/login"
+            className="flex items-center p-6 bg-secondary text-white rounded-xl shadow-lg hover:bg-secondary/90 hover:scale-[0.98] transition-all duration-200 group"
+          >
+            <div className="bg-white/20 p-4 rounded-full mr-6 group-hover:bg-white/30 transition-colors">
+              <Star size={32} />
+            </div>
+            <div>
+              <h3 className="text-2xl font-bold">I'm a Crisis Commander</h3>
+              <p className="text-white/90">Coordinate and manage</p>
+            </div>
+          </Link>
         </div>
-      </main>
+
+        <div className="mt-12 text-center text-sm text-slate-500">
+          Scan the QR code in your room to skip this screen
+        </div>
+      </div>
     </div>
   );
 }

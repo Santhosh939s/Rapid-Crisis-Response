@@ -1,0 +1,23 @@
+# CrisisLink - Project Brief
+
+## Project Overview
+CrisisLink is a real-time emergency response and coordination platform designed to facilitate rapid communication, live incident reporting, and personnel tracking. The system connects guests experiencing emergencies with responding staff and central commanders, transitioning from a mock-based prototype to a fully functional, secure, production-ready application.
+
+## Core Architecture & Technologies
+- Frontend Framework: Next.js (React 19)
+- Styling: Tailwind CSS
+- Authentication & Database: Firebase (Authentication & Realtime Database)
+- Mapping & Geolocation: Leaflet and React-Leaflet (for live staff-presence tracking and incident mapping)
+- UI Icons: Lucide React
+- AI Integration: Google Generative AI (@google/generative-ai)
+
+## Key Features & User Roles
+1. Guest SOS App: Allows individuals to instantly report incidents and request emergency assistance, feeding data live into the system.
+2. Staff Dashboard: Empowers field responders to receive incident alerts, manage their availability (live presence tracking), and coordinate with the central command.
+3. Commander Dashboard: Provides a high-level, real-time overview of all ongoing incidents and staff locations on a map, enabling effective resource allocation and emergency response management.
+
+## Project Objectives & Implementation Details
+- Real-Time Synchronization: Utilizing Firebase Realtime Database to ensure instant, synchronized updates across Guest, Staff, and Commander interfaces, replacing all mock data.
+- Secure Access: Enforcing robust Firebase Authentication to secure Staff and Commander dashboards.
+- Live Personnel Tracking: Implementing dynamic staff-presence and live tracking on map interfaces for optimized responder deployment.
+- UI/UX Refinement: Enhancing visual visibility, map interactions, and incident alert indicators to guarantee high usability during high-stakes emergency scenarios.
