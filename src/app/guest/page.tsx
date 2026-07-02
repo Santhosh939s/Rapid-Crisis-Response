@@ -45,25 +45,45 @@ function GuestSOSContent() {
     setShowConfirmModal(false);
     setStatus("sending");
     
-    try {
-      const type = incidentType || "Other";
-      const severity = type === "Medical Emergency" || type === "Fire / Smoke" ? "Critical" : "High";
-      
-      const newId = await createIncident({
-        type: type,
-        roomNumber: roomNumber,
-        floor: "Unknown", // In real app, derived from room number
-        guestDescription: description,
-        severity: severity,
-        status: "new"
-      });
-      
-      setIncidentId(newId!);
-      setStatus("sent");
-    } catch (error) {
-      console.error("Failed to send alert", error);
-      alert("Failed to send alert. Please call 911.");
-      setStatus("idle");
+    let location = undefined;
+    
+    const sendPayload = async (loc?: {lat: number, lng: number}) => {
+      try {
+        const type = incidentType || "Other";
+        const severity = type === "Medical Emergency" || type === "Fire / Smoke" ? "Critical" : "High";
+        
+        const newId = await createIncident({
+          type: type,
+          roomNumber: roomNumber,
+          floor: "Unknown", // In real app, derived from room number
+          guestDescription: description,
+          severity: severity,
+          status: "new",
+          location: loc
+        });
+        
+        setIncidentId(newId!);
+        setStatus("sent");
+      } catch (error) {
+        console.error("Failed to send alert", error);
+        alert("Failed to send alert. Please call 911.");
+        setStatus("idle");
+      }
+    };
+
+    if ("geolocation" in navigator) {
+      navigator.geolocation.getCurrentPosition(
+        (position) => {
+          sendPayload({ lat: position.coords.latitude, lng: position.coords.longitude });
+        },
+        (error) => {
+          console.warn("Geolocation failed or denied, sending without GPS", error);
+          sendPayload();
+        },
+        { enableHighAccuracy: true, timeout: 5000 }
+      );
+    } else {
+      sendPayload();
     }
   };
 

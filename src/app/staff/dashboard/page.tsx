@@ -65,6 +65,8 @@ export default function StaffDashboard() {
   const [, setTick] = useState(0);
 
   useEffect(() => {
+    let watchId: number;
+
     if (currentUser) {
       updateStaffPresence(currentUser.uid, {
         name: userEmail,
@@ -72,6 +74,24 @@ export default function StaffDashboard() {
         status: "Available",
         floor: "Lobby" // Default location
       });
+
+      // Start watching GPS location
+      if ("geolocation" in navigator) {
+        watchId = navigator.geolocation.watchPosition(
+          (position) => {
+            updateStaffPresence(currentUser.uid, {
+              location: {
+                lat: position.coords.latitude,
+                lng: position.coords.longitude
+              }
+            });
+          },
+          (error) => {
+            console.error("Error watching staff location", error);
+          },
+          { enableHighAccuracy: true, maximumAge: 10000 }
+        );
+      }
     }
 
     // Subscribe to real-time Firebase updates
@@ -85,8 +105,11 @@ export default function StaffDashboard() {
     return () => {
       unsubscribe();
       clearInterval(timer);
+      if (watchId !== undefined) {
+        navigator.geolocation.clearWatch(watchId);
+      }
     };
-  }, []);
+  }, [currentUser, userEmail]);
 
   const activeIncidents = incidents.filter(i => i.status !== "resolved");
   const myTasks = incidents.filter(i => i.assignedTo === userEmail && i.status !== "resolved");
@@ -137,6 +160,10 @@ export default function StaffDashboard() {
             <span className="font-bold text-xl tracking-tight">CrisisLink</span>
           </div>
           <div className="flex items-center gap-6">
+            <div className="flex items-center gap-1.5 bg-green-500/20 text-green-100 px-3 py-1 rounded-full text-xs font-bold border border-green-500/30">
+              <div className="w-2 h-2 rounded-full bg-green-400 animate-pulse"></div>
+              Location Active
+            </div>
             <div className="relative cursor-pointer">
               <Bell size={24} />
               {activeIncidents.length > 0 && (
