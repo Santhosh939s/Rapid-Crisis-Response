@@ -11,6 +11,8 @@ import AuthGuard from "@/components/AuthGuard";
 import { signOut } from "firebase/auth";
 import { auth } from "@/lib/firebase";
 import { useAuth } from "@/context/AuthContext";
+import { setDemoMode } from "@/lib/firebaseUtils";
+import { useRouter } from "next/navigation";
 import { useRef } from "react";
 import { useNotifications } from "@/hooks/useNotifications";
 const getSeverityColor = (severity: string) => {
@@ -97,9 +99,13 @@ export default function CommanderDashboard() {
     }
   };
 
+  const router = useRouter();
+
   const handleLogout = async () => {
     try {
+      setDemoMode(false);
       await signOut(auth);
+      router.push("/login");
     } catch (error) {
       console.error("Failed to log out", error);
     }

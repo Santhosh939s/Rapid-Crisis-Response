@@ -1,8 +1,13 @@
 import { db } from "./firebase";
 import { ref, push, set, onValue, update, onDisconnect, get } from "firebase/database";
 import type { Incident, IncidentStatus, Severity, Staff } from "./types";
+import { mockSubscribeToIncidents, mockUpdateIncident, mockSubscribeToStaff, mockUpdateStaffPresence, mockCreateIncident } from "./mockData";
+
+export let IS_DEMO_MODE = false;
+export const setDemoMode = (val: boolean) => { IS_DEMO_MODE = val; };
 
 export const createIncident = async (incidentData: Partial<Incident>) => {
+  if (IS_DEMO_MODE) return mockCreateIncident(incidentData);
   const incidentsRef = ref(db, 'incidents');
   const newIncidentRef = push(incidentsRef);
   
@@ -19,6 +24,7 @@ export const createIncident = async (incidentData: Partial<Incident>) => {
 };
 
 export const updateIncident = async (id: string, updates: Partial<Incident>, actionDesc?: string) => {
+  if (IS_DEMO_MODE) return mockUpdateIncident(id, updates, actionDesc);
   const incidentRef = ref(db, `incidents/${id}`);
   
   const updatePayload: any = {
@@ -27,12 +33,10 @@ export const updateIncident = async (id: string, updates: Partial<Incident>, act
   };
 
   await update(incidentRef, updatePayload);
-  
-  // If an action description is provided, we would ideally fetch the timeline and append to it.
-  // For simplicity in this demo, we'll assume updates happen successfully.
 };
 
 export const subscribeToIncidents = (callback: (incidents: Incident[]) => void) => {
+  if (IS_DEMO_MODE) return mockSubscribeToIncidents(callback);
   const incidentsRef = ref(db, 'incidents');
   return onValue(incidentsRef, (snapshot) => {
     const data = snapshot.val();
@@ -49,14 +53,14 @@ export const subscribeToIncidents = (callback: (incidents: Incident[]) => void) 
 };
 
 export const updateStaffPresence = async (uid: string, staffData: Partial<Staff>) => {
+  if (IS_DEMO_MODE) return mockUpdateStaffPresence(uid, staffData);
   const staffRef = ref(db, `staff/${uid}`);
   await update(staffRef, staffData);
-  
-  // Set up disconnect hook so they go offline if they close the tab
   onDisconnect(staffRef).update({ status: "Off Duty" });
 };
 
 export const subscribeToStaff = (callback: (staffList: Staff[]) => void) => {
+  if (IS_DEMO_MODE) return mockSubscribeToStaff(callback);
   const staffRef = ref(db, 'staff');
   return onValue(staffRef, (snapshot) => {
     const data = snapshot.val();

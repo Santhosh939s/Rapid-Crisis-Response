@@ -3,6 +3,7 @@
 import { useEffect } from "react";
 import { useRouter, usePathname } from "next/navigation";
 import { useAuth } from "@/context/AuthContext";
+import { IS_DEMO_MODE } from "@/lib/firebaseUtils";
 
 export default function AuthGuard({ children, role }: { children: React.ReactNode, role?: "Staff" | "Commander" }) {
   const { currentUser, loading, userRole } = useAuth();
@@ -10,6 +11,7 @@ export default function AuthGuard({ children, role }: { children: React.ReactNod
   const pathname = usePathname();
 
   useEffect(() => {
+    if (IS_DEMO_MODE) return; // Bypass completely in demo mode
     if (loading) return; // Wait until Firebase Auth is done
 
     if (!currentUser) {
@@ -31,6 +33,10 @@ export default function AuthGuard({ children, role }: { children: React.ReactNod
       }
     }
   }, [currentUser, loading, userRole, router, pathname, role]);
+
+  if (IS_DEMO_MODE) {
+    return <>{children}</>;
+  }
 
   if (loading) {
     return (

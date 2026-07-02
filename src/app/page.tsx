@@ -4,8 +4,13 @@ import Link from "next/link";
 import { motion } from "framer-motion";
 import { ShieldAlert, Play, ChevronRight, Activity, Users, MapPin, Zap } from "lucide-react";
 import Image from "next/image";
+import { useEffect } from "react";
+import { setDemoMode } from "@/lib/firebaseUtils";
 
 export default function LandingPage() {
+  useEffect(() => {
+    setDemoMode(false);
+  }, []);
   return (
     <div className="min-h-screen bg-[#020817] text-slate-50 overflow-hidden font-sans selection:bg-blue-500/30">
       
