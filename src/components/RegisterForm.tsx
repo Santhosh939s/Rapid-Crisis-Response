@@ -6,10 +6,12 @@ import Link from "next/link";
 import { UserPlus } from "lucide-react";
 import { createUserWithEmailAndPassword } from "firebase/auth";
 import { auth } from "@/lib/firebase";
+import { createUserRole } from "@/lib/firebaseUtils";
 
 export default function RegisterForm() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [role, setRole] = useState<"Staff" | "Commander">("Staff");
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState(false);
@@ -22,11 +24,18 @@ export default function RegisterForm() {
     setSuccess(false);
     
     try {
-      await createUserWithEmailAndPassword(auth, email, password);
+      const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+      // Save role to DB
+      await createUserRole(userCredential.user.uid, email, role);
+      
       setSuccess(true);
       // Give them a moment to see the success message
       setTimeout(() => {
-        router.push("/staff/login"); // Redirect to login page after creation
+        if (role === "Commander") {
+          router.push("/commander/login");
+        } else {
+          router.push("/staff/login");
+        }
       }, 2000);
     } catch (err: any) {
       setError(err.message || "Failed to register account");
@@ -88,6 +97,22 @@ export default function RegisterForm() {
                   placeholder="••••••••"
                   minLength={6}
                 />
+              </div>
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-slate-700">
+                Account Role
+              </label>
+              <div className="mt-1">
+                <select
+                  value={role}
+                  onChange={(e) => setRole(e.target.value as "Staff" | "Commander")}
+                  className="block w-full bg-white text-slate-900 px-3 py-3 border border-slate-300 rounded-xl shadow-sm focus:outline-none focus:ring-primary focus:border-primary sm:text-sm"
+                >
+                  <option value="Staff">Staff / Responder</option>
+                  <option value="Commander">Crisis Commander</option>
+                </select>
               </div>
             </div>
 

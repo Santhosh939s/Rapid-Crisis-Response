@@ -1,5 +1,5 @@
 import { db } from "./firebase";
-import { ref, push, set, onValue, update, onDisconnect } from "firebase/database";
+import { ref, push, set, onValue, update, onDisconnect, get } from "firebase/database";
 import type { Incident, IncidentStatus, Severity, Staff } from "./types";
 
 export const createIncident = async (incidentData: Partial<Incident>) => {
@@ -70,4 +70,22 @@ export const subscribeToStaff = (callback: (staffList: Staff[]) => void) => {
       callback([]);
     }
   });
+};
+
+export const createUserRole = async (uid: string, email: string, role: "Staff" | "Commander") => {
+  const userRef = ref(db, `users/${uid}`);
+  await set(userRef, {
+    email,
+    role,
+    createdAt: Date.now()
+  });
+};
+
+export const getUserRole = async (uid: string): Promise<"Staff" | "Commander" | null> => {
+  const userRef = ref(db, `users/${uid}`);
+  const snapshot = await get(userRef);
+  if (snapshot.exists()) {
+    return snapshot.val().role;
+  }
+  return null;
 };
