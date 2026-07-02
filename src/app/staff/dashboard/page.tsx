@@ -8,6 +8,8 @@ import AuthGuard from "@/components/AuthGuard";
 import { signOut } from "firebase/auth";
 import { auth } from "@/lib/firebase";
 import { useAuth } from "@/context/AuthContext";
+import { useRef } from "react";
+import { useNotifications } from "@/hooks/useNotifications";
 
 const getSeverityColor = (severity: Severity) => {
   switch (severity) {
@@ -63,6 +65,9 @@ export default function StaffDashboard() {
   const [incidents, setIncidents] = useState<Incident[]>([]);
   const [filter, setFilter] = useState<"ALL" | Severity>("ALL");
   const [, setTick] = useState(0);
+  
+  const { alertNewIncident, permission } = useNotifications();
+  const knownIncidentIds = useRef<Set<string>>(new Set());
 
   useEffect(() => {
     let watchId: number;
@@ -96,6 +101,20 @@ export default function StaffDashboard() {
 
     // Subscribe to real-time Firebase updates
     const unsubscribe = subscribeToIncidents((data) => {
+      // Check for new incidents to trigger notification
+      if (knownIncidentIds.current.size > 0) { // Don't alert on initial load
+        const newIncidents = data.filter(inc => !knownIncidentIds.current.has(inc.id) && inc.status === "new");
+        if (newIncidents.length > 0) {
+          const latest = newIncidents[0];
+          alertNewIncident(
+            `🚨 NEW INCIDENT: ${latest.type}`,
+            `Room ${latest.roomNumber} (${latest.floor}) needs immediate attention.`
+          );
+        }
+      }
+      
+      // Update known IDs
+      knownIncidentIds.current = new Set(data.map(inc => inc.id));
       setIncidents(data);
     });
 
@@ -109,7 +128,7 @@ export default function StaffDashboard() {
         navigator.geolocation.clearWatch(watchId);
       }
     };
-  }, [currentUser, userEmail]);
+  }, [currentUser, userEmail, alertNewIncident]);
 
   const activeIncidents = incidents.filter(i => i.status !== "resolved");
   const myTasks = incidents.filter(i => i.assignedTo === userEmail && i.status !== "resolved");
@@ -160,9 +179,15 @@ export default function StaffDashboard() {
             <span className="font-bold text-xl tracking-tight">CrisisLink</span>
           </div>
           <div className="flex items-center gap-6">
-            <div className="flex items-center gap-1.5 bg-green-500/20 text-green-100 px-3 py-1 rounded-full text-xs font-bold border border-green-500/30">
-              <div className="w-2 h-2 rounded-full bg-green-400 animate-pulse"></div>
-              Location Active
+            <div className="flex gap-2">
+              <div className={`flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold border ${permission === "granted" ? "bg-green-500/20 text-green-100 border-green-500/30" : "bg-red-500/20 text-red-100 border-red-500/30"}`}>
+                <div className={`w-2 h-2 rounded-full ${permission === "granted" ? "bg-green-400 animate-pulse" : "bg-red-400"}`}></div>
+                {permission === "granted" ? "Alerts On" : "Alerts Off"}
+              </div>
+              <div className="flex items-center gap-1.5 bg-blue-500/20 text-blue-100 px-3 py-1 rounded-full text-xs font-bold border border-blue-500/30">
+                <div className="w-2 h-2 rounded-full bg-blue-400 animate-pulse"></div>
+                GPS Active
+              </div>
             </div>
             <div className="relative cursor-pointer">
               <Bell size={24} />
