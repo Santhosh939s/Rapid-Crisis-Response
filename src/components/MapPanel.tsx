@@ -1,7 +1,8 @@
 "use client";
 
-import { useEffect } from "react";
-import { MapContainer, TileLayer, Marker, Popup, useMap } from "react-leaflet";
+import { useEffect, useMemo } from "react";
+import { MapContainer, TileLayer, Marker, Popup, useMap, Polyline } from "react-leaflet";
+import L from "leaflet";
 import "leaflet/dist/leaflet.css";
 import "leaflet-defaulticon-compatibility";
 import "leaflet-defaulticon-compatibility/dist/leaflet-defaulticon-compatibility.css";
@@ -22,9 +23,63 @@ function MapUpdater({ center }: { center: { lat: number; lng: number } }) {
   return null;
 }
 
+// Custom Tactical Icons
+const createIncidentIcon = (severity: string) => {
+  const color = severity === "Critical" ? "#ef4444" : severity === "High" ? "#f97316" : "#eab308";
+  return L.divIcon({
+    className: "custom-div-icon",
+    html: `<div style="background-color: ${color}; width: 20px; height: 20px; border-radius: 50%; border: 3px solid white; box-shadow: 0 0 15px ${color}; animation: pulse 2s infinite;"></div>`,
+    iconSize: [20, 20],
+    iconAnchor: [10, 10]
+  });
+};
+
+const createStaffIcon = (status: string) => {
+  const color = status === "Available" ? "#10b981" : status === "On Task" ? "#3b82f6" : "#64748b";
+  return L.divIcon({
+    className: "custom-div-icon",
+    html: `<div style="background-color: ${color}; width: 16px; height: 16px; border-radius: 50%; border: 2px solid white; box-shadow: 0 0 10px ${color};"></div>`,
+    iconSize: [16, 16],
+    iconAnchor: [8, 8]
+  });
+};
+
 export default function MapPanel({ activeIncidents = [], staff = [], centerLocation = { lat: 37.7749, lng: -122.4194 } }: MapPanelProps) {
+  
+  // Calculate Polylines connecting staff to their assigned incidents
+  const polylines = useMemo(() => {
+    const lines: { positions: [number, number][]; color: string }[] = [];
+    
+    staff.forEach(s => {
+      if (s.status === "On Task" && s.currentIncident && s.location) {
+        const incident = activeIncidents.find(i => i.id === s.currentIncident);
+        if (incident && incident.location) {
+          lines.push({
+            positions: [
+              [s.location.lat, s.location.lng],
+              [incident.location.lat, incident.location.lng]
+            ],
+            color: "#3b82f6"
+          });
+        }
+      }
+    });
+    
+    return lines;
+  }, [activeIncidents, staff]);
+
   return (
-    <div className="w-full h-full relative z-0">
+    <div className="w-full h-full relative z-0 bg-[#050B14]">
+      <style dangerouslySetInnerHTML={{__html: `
+        @keyframes pulse {
+          0% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.7); }
+          70% { box-shadow: 0 0 0 15px rgba(239, 68, 68, 0); }
+          100% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0); }
+        }
+        .leaflet-container {
+          background: #050B14 !important;
+        }
+      `}} />
       <MapContainer 
         center={[centerLocation.lat, centerLocation.lng]} 
         zoom={16} 
@@ -32,36 +87,55 @@ export default function MapPanel({ activeIncidents = [], staff = [], centerLocat
         className="w-full h-full z-0"
         style={{ height: "100%", minHeight: "400px" }}
       >
+        {/* Dark Mode Map Tiles */}
         <TileLayer
-          attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-          url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+          attribution='&copy; <a href="https://carto.com/attributions">CARTO</a>'
+          url="https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png"
         />
         <MapUpdater center={centerLocation} />
 
-        {/* Mock Incidents Marker */}
+        {/* Polylines for Staff -> Incident */}
+        {polylines.map((line, idx) => (
+          <Polyline 
+            key={idx} 
+            positions={line.positions} 
+            color={line.color} 
+            weight={3} 
+            dashArray="10, 10" 
+            className="animate-pulse"
+          />
+        ))}
+
+        {/* Incidents Markers */}
         {activeIncidents.map(inc => (
           <Marker 
             key={inc.id} 
             position={inc.location ? [inc.location.lat, inc.location.lng] : [centerLocation.lat + 0.001, centerLocation.lng - 0.001]}
+            icon={createIncidentIcon(inc.severity)}
           >
             <Popup>
-              <strong>{inc.type}</strong><br/>
-              Room: {inc.roomNumber} ({inc.floor})<br/>
-              Status: {inc.status}
+              <div className="text-slate-800">
+                <strong className="block text-red-600 mb-1">{inc.type}</strong>
+                Room: {inc.roomNumber} ({inc.floor})<br/>
+                Status: <span className="uppercase text-xs font-bold">{inc.status}</span>
+              </div>
             </Popup>
           </Marker>
         ))}
 
-        {/* Mock Staff Markers */}
+        {/* Staff Markers */}
         {staff.map(s => (
           <Marker 
             key={s.id} 
             position={s.location ? [s.location.lat, s.location.lng] : [centerLocation.lat - 0.001, centerLocation.lng + 0.001]}
+            icon={createStaffIcon(s.status)}
           >
             <Popup>
-              <strong>{s.name}</strong><br/>
-              Role: {s.role}<br/>
-              Status: {s.status}
+              <div className="text-slate-800">
+                <strong className="block text-blue-600 mb-1">{s.name}</strong>
+                Role: {s.role}<br/>
+                Status: <span className="uppercase text-xs font-bold">{s.status}</span>
+              </div>
             </Popup>
           </Marker>
         ))}
