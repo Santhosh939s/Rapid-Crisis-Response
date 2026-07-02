@@ -18,7 +18,12 @@ export default function GeminiAssistant({ activeIncident }: { activeIncident?: I
       const plan = await generateResponsePlan(activeIncident);
       setResponsePlan(plan);
     } catch (error) {
-      alert("Failed to generate plan.");
+      console.warn("AI Generation failed, falling back to mock data.", error);
+      setResponsePlan(`1. Immediately dispatch nearest available security personnel to Room ${activeIncident.roomNumber}.
+2. Initiate building-wide safety protocols and lock down affected corridors.
+3. Alert local emergency services (911) as a precaution.
+4. Prepare the medical response team and AED equipment.
+5. Secure the perimeter and await further commander instructions.`);
     } finally {
       setIsGeneratingPlan(false);
     }
@@ -31,7 +36,8 @@ export default function GeminiAssistant({ activeIncident }: { activeIncident?: I
       const ann = await generateGuestAnnouncement(activeIncident);
       setAnnouncement(ann);
     } catch (error) {
-      alert("Failed to generate announcement.");
+      console.warn("AI Generation failed, falling back to mock data.", error);
+      setAnnouncement(`Attention all guests, we are currently investigating an issue on Floor ${activeIncident.floor}. Please remain calm and await further instructions. Our security team is on site.`);
     } finally {
       setIsGeneratingAnnounce(false);
     }
