@@ -239,10 +239,10 @@ export default function CommanderDashboard() {
                 <div className="mt-auto pt-6 border-t border-white/5">
                   <p className="text-xs text-slate-400 font-bold tracking-widest uppercase mb-3">Dispatch Operations</p>
                   <div className="flex gap-2">
-                    <select id="assignSelect" className="flex-1 bg-slate-800 border border-white/10 rounded-xl text-sm px-4 py-3 font-medium text-white focus:ring-2 focus:ring-primary outline-none appearance-none">
-                      <option value="" className="text-slate-500">Select Responder...</option>
+                    <select id="assignSelect" className="flex-1 bg-slate-800/80 border border-slate-600 rounded-xl text-sm px-4 py-3 font-bold text-white focus:ring-2 focus:ring-primary outline-none appearance-none shadow-inner">
+                      <option value="" className="text-white bg-slate-800">Select Responder...</option>
                       {staff.filter(s => s.status === "Available" && s.role !== "Commander").map(s => (
-                        <option key={s.id} value={`${s.id}|${s.name}`}>{s.name} ({s.floor})</option>
+                        <option key={s.id} value={`${s.id}|${s.name}`} className="bg-slate-800 text-white">{s.name} ({s.floor})</option>
                       ))}
                     </select>
                     <button 
@@ -258,8 +258,8 @@ export default function CommanderDashboard() {
                     </button>
                   </div>
                   
-                  <button className="w-full mt-3 bg-red-500/10 hover:bg-red-500/20 text-red-400 border border-red-500/20 font-bold py-3 rounded-xl text-sm flex justify-center items-center gap-2 transition-colors">
-                    <PhoneCall size={16} /> Escalate to Emergency Services (911)
+                  <button className="w-full mt-3 bg-red-600 hover:bg-red-700 text-white font-bold py-3 rounded-xl text-sm flex justify-center items-center gap-2 transition-colors shadow-lg">
+                    <PhoneCall size={16} className="text-white" /> Escalate to Emergency Services (911)
                   </button>
                 </div>
               </div>
