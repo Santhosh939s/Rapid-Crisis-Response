@@ -9,7 +9,7 @@ const inter = Inter({
 });
 
 export const metadata: Metadata = {
-  title: "CrisisLink | Rapid Crisis Response System",
+  title: "Rapid Crisis Response",
   description: "Instant crisis coordination for hospitality venues",
 };
 

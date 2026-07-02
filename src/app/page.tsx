@@ -32,7 +32,7 @@ export default function LandingPage() {
           <div className="bg-primary p-2 rounded-lg">
             <ShieldAlert size={24} className="text-white" />
           </div>
-          <span className="text-xl font-bold tracking-tight text-white">CrisisLink</span>
+          <span className="text-xl font-bold tracking-tight text-white">Rapid Crisis Response</span>
         </motion.div>
         
         <motion.div 

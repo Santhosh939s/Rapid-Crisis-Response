@@ -149,7 +149,7 @@ export default function StaffDashboard() {
           <div className="max-w-md mx-auto px-4 h-16 flex items-center justify-between">
             <div className="flex items-center gap-2">
               <Shield className="text-red-500" />
-              <span className="font-bold text-lg text-white tracking-tight">CrisisLink Staff</span>
+              <span className="font-bold text-lg text-white tracking-tight">Rapid Crisis Response Staff</span>
             </div>
             <div className="flex items-center gap-4">
               <div className="relative">

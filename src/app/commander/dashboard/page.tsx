@@ -123,7 +123,7 @@ export default function CommanderDashboard() {
             <div className="bg-primary/20 p-2 rounded-lg">
               <Star className="text-primary fill-primary" size={20} />
             </div>
-            <span className="font-bold text-xl tracking-tight text-white">CrisisLink</span>
+            <span className="font-bold text-xl tracking-tight text-white">Rapid Crisis Response</span>
             <span className="bg-primary/10 border border-primary/20 text-primary text-xs font-black px-2 py-1 rounded ml-2 uppercase tracking-widest">Enterprise Command</span>
           </div>
           <div className="flex items-center gap-6">

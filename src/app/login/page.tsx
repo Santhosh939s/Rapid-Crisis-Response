@@ -8,7 +8,7 @@ export default function LandingPage() {
       <div className="md:w-1/2 bg-background flex flex-col justify-center items-center p-8 relative overflow-hidden border-b md:border-b-0 md:border-r border-slate-200 dark:border-slate-800">
         <div className="absolute animate-pulse-ring rounded-full w-96 h-96 bg-primary/10 -z-10"></div>
         <h1 className="text-5xl md:text-7xl font-bold text-primary mb-4 tracking-tight">
-          CrisisLink
+          Rapid Crisis Response
         </h1>
         <p className="text-xl md:text-2xl text-slate-600 dark:text-slate-400 text-center max-w-md">
           Instant crisis coordination for hospitality venues
