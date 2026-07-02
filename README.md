@@ -1,36 +1,60 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Rapid Crisis Response (CrisisLink) 🚨
 
-## Getting Started
+CrisisLink is a scalable, real-time enterprise emergency coordination platform designed for hospitality and large-scale facility management. Built with Next.js and Firebase, it provides a unified command center for managing critical incidents, coordinating staff responses, and tracking emergency geolocation in real-time.
 
-First, run the development server:
+## 🌟 Key Features & Functionalities
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+### 1. Role-Based Access Control (RBAC) & Security
+*   **Dual-Tier Authentication:** Secure Firebase Auth implementation separating users into **Commanders** (Dispatch/Management) and **Staff** (On-the-ground responders).
+*   **Database-Driven Role Persistence:** User roles are securely mapped and stored in the Firebase Realtime Database.
+*   **Route Protection:** Custom Next.js middleware-style `AuthGuard` automatically intercepts unauthorized access attempts, redirecting users to their designated role-specific dashboards.
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+### 2. Live Commander Dashboard
+*   **Centralized Overview:** A premium, dark-mode inspired command center displaying live incident feeds, deployed staff metrics, and active emergency alerts.
+*   **Intelligent Dispatching:** Commanders can review incident details (e.g., Fire, Medical) and assign available, nearby staff members to respond with a single click.
+*   **AI Crisis Assistant:** Integration with Google's **Gemini AI** provides real-time, context-aware instructions for handling specific emergencies (e.g., "How to handle a grease fire in the kitchen") directly within the dashboard.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+### 3. Interactive Geolocation & Live Mapping
+*   **Dynamic Tracking:** Utilizes the HTML5 `navigator.geolocation` API to stream live GPS coordinates from Staff mobile devices directly to the Commander's map.
+*   **Leaflet Integration:** A highly interactive map (built with `react-leaflet`) that dynamically plots active incidents, staff locations, and emergency resources (like AEDs and Fire Extinguishers).
+*   **Precision SOS Pinpointing:** When a guest triggers an SOS, the system captures both their manual room input and their exact GPS coordinates for precise responder routing.
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+### 4. Real-Time Data Synchronization
+*   **Firebase Realtime Database:** The entire platform operates on WebSocket-like live data streams. When a guest submits an SOS, or a Commander assigns a task, the UI updates instantly across all connected devices without requiring page refreshes.
 
-## Learn More
+### 5. Web Notifications & Audio Alerts
+*   **Background Alerting:** Custom React hooks utilizing the native Browser Notification API push desktop notifications to Commanders and Staff when a new critical incident occurs.
+*   **Dynamic Audio Synthesis:** Uses the Web Audio API to generate high-pitched emergency "ping" sounds programmatically, ensuring responders are alerted even if the dashboard is running in a background tab.
 
-To learn more about Next.js, take a look at the following resources:
+### 6. Guest SOS Portal
+*   **Frictionless Emergency Reporting:** A mobile-optimized, highly accessible SOS interface designed for panicked users. 
+*   **One-Tap Alerts:** Guests can select emergency types (Medical, Fire, Security) and submit an alert instantly, triggering the entire response chain.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+---
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## 💻 Technology Stack
 
-## Deploy on Vercel
+*   **Frontend Framework:** Next.js 14 (App Router)
+*   **UI/Styling:** React, Tailwind CSS, Lucide Icons
+*   **Map Rendering:** Leaflet, React-Leaflet
+*   **Backend & Database:** Firebase Realtime Database
+*   **Authentication:** Firebase Auth
+*   **Artificial Intelligence:** Google Gemini AI API (Server Actions)
+*   **Hosting & Deployment:** Vercel (Frontend), Firebase (Backend/Auth rules)
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+---
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## 🎨 UI/UX Design Aesthetics
+The application is designed to feel like a high-end, mission-critical enterprise software system:
+*   **Commander View:** Employs a tactical "Dark Mode" aesthetic (Slate/Navy with bright warning accents) to reduce eye strain and highlight critical alerts.
+*   **Staff View:** Clean, highly legible, mobile-first design optimized for rapid reading while moving.
+*   **Micro-interactions:** Uses subtle CSS animations (like pulsing alert rings and slide-in modals) to draw attention to high-priority information without being overwhelming.
+
+---
+
+## 🚀 How to Run Locally
+
+1. Clone the repository.
+2. Run `npm install` to install dependencies.
+3. Create a `.env.local` file and add your Firebase and Gemini API keys.
+4. Run `npm run dev` to start the development server on `localhost:3000`.
