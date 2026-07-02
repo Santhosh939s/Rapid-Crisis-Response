@@ -11,6 +11,22 @@ const inter = Inter({
 export const metadata: Metadata = {
   title: "Rapid Crisis Response",
   description: "Instant crisis coordination for hospitality venues",
+  manifest: "/manifest.json",
+  appleWebApp: {
+    capable: true,
+    statusBarStyle: "black-translucent",
+    title: "CrisisResponse",
+  },
+  formatDetection: {
+    telephone: false,
+  },
+};
+
+export const viewport = {
+  themeColor: "#050B14",
+  width: "device-width",
+  initialScale: 1,
+  maximumScale: 1,
 };
 
 export default function RootLayout({

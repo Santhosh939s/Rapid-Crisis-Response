@@ -275,10 +275,28 @@ export default function CommanderDashboard() {
 
         {/* Column 3: Analytics & Fleet (Span 3) */}
         <div className="xl:col-span-3 flex flex-col gap-6">
-          <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 0.5, delay: 0.3 }} className="bg-slate-900/50 border border-white/5 rounded-2xl p-6 h-[300px] flex flex-col">
-            <h2 className="text-lg font-bold text-white mb-4 flex items-center gap-2">
-              <Activity size={18} className="text-blue-400" /> Response Analytics
-            </h2>
+          <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 0.5, delay: 0.3 }} className="bg-slate-900/50 border border-white/5 rounded-2xl p-6 h-[300px] flex flex-col print:bg-white print:border-black print:text-black">
+            
+            <style dangerouslySetInnerHTML={{__html: `
+              @media print {
+                body { background: white !important; color: black !important; }
+                header, .print-hide { display: none !important; }
+                .print\\:bg-white { background: white !important; }
+                .print\\:text-black { color: black !important; }
+                .print\\:border-black { border-color: black !important; }
+                * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
+              }
+            `}} />
+
+            <div className="flex justify-between items-center mb-4">
+              <h2 className="text-lg font-bold text-white print:text-black flex items-center gap-2">
+                <Activity size={18} className="text-blue-400" /> Response Analytics
+              </h2>
+              <button onClick={() => window.print()} className="print-hide text-xs bg-blue-600 hover:bg-blue-700 text-white px-3 py-1.5 rounded-lg font-bold transition-colors">
+                Export PDF
+              </button>
+            </div>
+            
             <div className="flex-1 w-full -ml-4">
               <ResponsiveContainer width="100%" height="100%">
                 <AreaChart data={mockAnalyticsData}>
