@@ -30,45 +30,45 @@ export default function EvacuationTracker() {
   const percentage = Math.round((clearedGuests / totalGuests) * 100);
 
   return (
-    <div className="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden">
-      <div className="bg-slate-800 text-white p-4 flex items-center justify-between">
-        <div className="flex items-center gap-2">
-          <Users size={20} className="text-blue-400" />
-          <h2 className="text-lg font-bold">Evacuation Headcount Tracker</h2>
+    <div className="bg-slate-900/50 rounded-2xl border border-white/5 overflow-hidden flex flex-col h-full">
+      <div className="bg-slate-800/50 border-b border-white/5 p-4 flex items-center justify-between">
+        <div className="flex items-center gap-2 text-white">
+          <Users size={18} className="text-blue-400" />
+          <h2 className="text-sm font-bold tracking-wider uppercase">Evacuation Tracker</h2>
         </div>
-        <button className="bg-red-600 hover:bg-red-700 text-white px-4 py-1.5 rounded-lg font-bold text-sm transition-colors flex items-center gap-2 shadow-sm animate-pulse">
-          <AlertTriangle size={16} /> Send Evacuation Order
+        <button className="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-xl font-bold text-xs transition-colors flex items-center gap-2 shadow-[0_0_15px_-3px_rgba(239,68,68,0.5)] animate-pulse">
+          <AlertTriangle size={14} /> Trigger Evacuation
         </button>
       </div>
 
-      <div className="p-5">
+      <div className="p-6 flex-1 flex flex-col">
         {/* Progress Bar */}
         <div className="mb-6">
-          <div className="flex justify-between text-sm font-bold text-slate-700 mb-2">
-            <span>{clearedGuests} of {totalGuests} guests accounted for</span>
-            <span className={percentage === 100 ? "text-success" : "text-primary"}>{percentage}% Cleared</span>
+          <div className="flex justify-between text-xs font-bold text-slate-400 uppercase tracking-widest mb-3">
+            <span>{clearedGuests} of {totalGuests} accounted for</span>
+            <span className={percentage === 100 ? "text-emerald-400" : "text-primary"}>{percentage}% Cleared</span>
           </div>
-          <div className="w-full bg-slate-200 rounded-full h-4 overflow-hidden">
+          <div className="w-full bg-slate-800 rounded-full h-3 overflow-hidden border border-white/5">
             <div 
-              className={`h-4 transition-all duration-500 ease-out ${percentage === 100 ? 'bg-success' : 'bg-primary'}`} 
+              className={`h-3 transition-all duration-500 ease-out ${percentage === 100 ? 'bg-emerald-500 shadow-[0_0_10px_rgba(16,185,129,0.5)]' : 'bg-primary shadow-[0_0_10px_rgba(220,38,38,0.5)]'}`} 
               style={{ width: `${percentage}%` }}
             ></div>
           </div>
         </div>
 
         {/* Zones Grid */}
-        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
+        <div className="grid grid-cols-2 lg:grid-cols-3 gap-3 flex-1">
           {ZONES.map(zone => {
             const isCleared = clearedZones.has(zone.id);
             return (
               <button
                 key={zone.id}
                 onClick={() => toggleZone(zone.id)}
-                className={`flex flex-col items-center justify-center p-4 rounded-xl border-2 transition-all ${isCleared ? 'border-success bg-success/5 text-success' : 'border-slate-200 bg-white text-slate-600 hover:border-slate-300'}`}
+                className={`flex flex-col items-center justify-center p-3 rounded-xl border transition-all ${isCleared ? 'border-emerald-500/50 bg-emerald-500/10 text-emerald-400' : 'border-white/10 bg-slate-800/50 text-slate-400 hover:border-white/20 hover:bg-slate-700/50'}`}
               >
-                {isCleared ? <CheckCircle2 size={24} className="mb-2" /> : <Users size={24} className="mb-2 text-slate-400" />}
-                <span className="font-bold text-sm text-center">{zone.name}</span>
-                <span className={`text-xs mt-1 ${isCleared ? 'text-success/80' : 'text-slate-400'}`}>
+                {isCleared ? <CheckCircle2 size={20} className="mb-1" /> : <Users size={20} className="mb-1 opacity-50" />}
+                <span className="font-bold text-xs uppercase tracking-wider text-center">{zone.name}</span>
+                <span className={`text-[10px] mt-1 font-bold ${isCleared ? 'text-emerald-500/80' : 'text-slate-500'}`}>
                   {zone.total} Guests
                 </span>
               </button>
