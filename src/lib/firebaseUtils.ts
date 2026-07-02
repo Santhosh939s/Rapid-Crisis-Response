@@ -3,11 +3,25 @@ import { ref, push, set, onValue, update, onDisconnect, get } from "firebase/dat
 import type { Incident, IncidentStatus, Severity, Staff } from "./types";
 import { mockSubscribeToIncidents, mockUpdateIncident, mockSubscribeToStaff, mockUpdateStaffPresence, mockCreateIncident } from "./mockData";
 
-export let IS_DEMO_MODE = false;
-export const setDemoMode = (val: boolean) => { IS_DEMO_MODE = val; };
+export const setDemoMode = (val: boolean) => {
+  if (typeof window !== "undefined") {
+    if (val) {
+      sessionStorage.setItem("IS_DEMO_MODE", "true");
+    } else {
+      sessionStorage.removeItem("IS_DEMO_MODE");
+    }
+  }
+};
+
+export const getDemoMode = () => {
+  if (typeof window !== "undefined") {
+    return sessionStorage.getItem("IS_DEMO_MODE") === "true";
+  }
+  return false;
+};
 
 export const createIncident = async (incidentData: Partial<Incident>) => {
-  if (IS_DEMO_MODE) return mockCreateIncident(incidentData);
+  if (getDemoMode()) return mockCreateIncident(incidentData);
   const incidentsRef = ref(db, 'incidents');
   const newIncidentRef = push(incidentsRef);
   
@@ -24,7 +38,7 @@ export const createIncident = async (incidentData: Partial<Incident>) => {
 };
 
 export const updateIncident = async (id: string, updates: Partial<Incident>, actionDesc?: string) => {
-  if (IS_DEMO_MODE) return mockUpdateIncident(id, updates, actionDesc);
+  if (getDemoMode()) return mockUpdateIncident(id, updates, actionDesc);
   const incidentRef = ref(db, `incidents/${id}`);
   
   const updatePayload: any = {
@@ -36,7 +50,7 @@ export const updateIncident = async (id: string, updates: Partial<Incident>, act
 };
 
 export const subscribeToIncidents = (callback: (incidents: Incident[]) => void) => {
-  if (IS_DEMO_MODE) return mockSubscribeToIncidents(callback);
+  if (getDemoMode()) return mockSubscribeToIncidents(callback);
   const incidentsRef = ref(db, 'incidents');
   return onValue(incidentsRef, (snapshot) => {
     const data = snapshot.val();
@@ -53,14 +67,14 @@ export const subscribeToIncidents = (callback: (incidents: Incident[]) => void) 
 };
 
 export const updateStaffPresence = async (uid: string, staffData: Partial<Staff>) => {
-  if (IS_DEMO_MODE) return mockUpdateStaffPresence(uid, staffData);
+  if (getDemoMode()) return mockUpdateStaffPresence(uid, staffData);
   const staffRef = ref(db, `staff/${uid}`);
   await update(staffRef, staffData);
   onDisconnect(staffRef).update({ status: "Off Duty" });
 };
 
 export const subscribeToStaff = (callback: (staffList: Staff[]) => void) => {
-  if (IS_DEMO_MODE) return mockSubscribeToStaff(callback);
+  if (getDemoMode()) return mockSubscribeToStaff(callback);
   const staffRef = ref(db, 'staff');
   return onValue(staffRef, (snapshot) => {
     const data = snapshot.val();

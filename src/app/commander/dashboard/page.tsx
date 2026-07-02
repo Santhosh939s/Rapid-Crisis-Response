@@ -70,6 +70,7 @@ export default function CommanderDashboard() {
             `🚨 NEW INCIDENT: ${latest.type}`,
             `Room ${latest.roomNumber} (${latest.floor}) needs immediate attention.`
           );
+          setActiveIncidentId(latest.id);
         }
       }
       knownIncidentIds.current = new Set(data.map(inc => inc.id));
